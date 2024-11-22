@@ -1,0 +1,60 @@
+﻿@page "/Calculator/calculator"
+@using Interfaces.Calculator
+@inject IStringCalculator StringCalculator
+@using System.ComponentModel.DataAnnotations
+
+<h2>String Calculator</h2>
+
+<EditForm Model="@inputModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="numbers">Enter Numbers:</label>
+        <InputText id="numbers" class="form-control" @bind-Value="inputModel.Numbers" />
+    </div>
+    <button type="submit" class="btn btn-primary">Calculate</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@if (result.HasValue)
+{
+    <div class="alert alert-success">Result: @result</div>
+}
+
+@code {
+    private InputModel inputModel = new InputModel();
+    private int? result;
+    private string errorMessage;
+
+    private void HandleValidSubmit()
+    {
+        // Clear previous error message
+        errorMessage = null;
+
+        var calculationResult = StringCalculator.Add(inputModel.Numbers);
+
+        if (!calculationResult.Success)
+        {
+            errorMessage = calculationResult.ErrorMessage;
+            result = null;
+            StateHasChanged(); // Force re-render
+        }
+        else
+        {
+            errorMessage = null;
+            result = calculationResult.Result;
+            StateHasChanged(); // Force re-render
+        }
+    }
+
+    public class InputModel
+    {
+        
+        public string Numbers { get; set; }
+    }
+}

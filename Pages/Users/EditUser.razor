@@ -1,0 +1,105 @@
+﻿@page "/Users/edituser/{id:int}"
+@using Models
+@using Models.Users
+@using Interfaces
+@using Back.Services
+@inject IUserService UserService
+@inject NavigationManager Navigation
+
+<h2>Edit User</h2>
+
+@if (user == null)
+{
+    <p>No user found to edit.</p>
+}
+else
+{
+    <EditForm Model="@user" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <InputText id="username" class="form-control" @bind-Value="user.Username" />
+        </div>
+        <div class="form-group">
+            <label for="name">Name</label>
+            <InputText id="name" class="form-control" @bind-Value="user.Name" />
+        </div>
+        <div class="form-group">
+            <label for="surname">Surname</label>
+            <InputText id="surname" class="form-control" @bind-Value="user.Surname" />
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <InputText id="email" class="form-control" @bind-Value="user.EmailAddress" />
+        </div>
+        <div class="form-group">
+            <label for="cellphone">Cellphone Number</label>
+            <InputText id="cellphone" class="form-control" @bind-Value="user.CellphoneNumber" />
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </EditForm>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private User user;
+    private string errorMessage;
+
+    protected override void OnInitialized()
+    {
+        user = UserService.GetUsers().FirstOrDefault(u => u.Id == Id);
+        if (user == null)
+        {
+            errorMessage = "User not found.";
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        // Clear previous error message
+        errorMessage = null;
+
+        // Check for duplicate username, email, or cellphone number
+        if (UserService.GetUsers().Any(u => u.Username == user.Username && u.Id != user.Id))
+        {
+            errorMessage = "Username already exists.";
+            StateHasChanged(); // Force re-render
+            return;
+        }
+
+        if (UserService.GetUsers().Any(u => u.EmailAddress == user.EmailAddress && u.Id != user.Id))
+        {
+            errorMessage = "Email address already exists.";
+            StateHasChanged(); // Force re-render
+            return;
+        }
+
+        if (UserService.GetUsers().Any(u => u.CellphoneNumber == user.CellphoneNumber && u.Id != user.Id))
+        {
+            errorMessage = "Cellphone number already exists.";
+            StateHasChanged(); // Force re-render
+            return;
+        }
+
+        // Save the changes
+        var result = UserService.EditUser(user);
+        if (result.Success)
+        {
+            Navigation.NavigateTo("/Users/users");
+        }
+        else
+        {
+            errorMessage = result.ErrorMessage;
+            StateHasChanged(); // Force re-render
+        }
+    }
+}

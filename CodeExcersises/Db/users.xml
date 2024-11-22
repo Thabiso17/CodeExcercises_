@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfUser xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <User>
+    <Id>1</Id>
+    <Username>John Wick 1</Username>
+    <Name>John</Name>
+    <Surname>Wick</Surname>
+    <EmailAddress>jw@test.com</EmailAddress>
+    <CellphoneNumber>0147852963</CellphoneNumber>
+  </User>
+</ArrayOfUser>

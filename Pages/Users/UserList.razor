@@ -1,0 +1,74 @@
+﻿@page "/Users/users"
+@using Models.Users
+@using Interfaces
+@using Back.Services
+@inject IUserService UserService
+@inject NavigationManager Navigation
+
+<h3>Registered Users</h3>
+
+<button class="btn btn-primary" @onclick="NavigateToRegister">
+    <i class="fas fa-user-plus"></i> Register New User
+</button>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Email Address</th>
+            <th>Cellphone Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in users)
+        {
+            <tr>
+                <td>@user.Username</td>
+                <td>@user.Name</td>
+                <td>@user.Surname</td>
+                <td>@user.EmailAddress</td>
+                <td>@user.CellphoneNumber</td>
+                <td>
+                    <button class="btn btn-secondary" @onclick="() => EditUser(user.Id)">Edit</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteUser(user.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<User> users = new List<User>();
+
+    protected override void OnInitialized()
+    {
+        users = UserService.GetUsers();
+    }
+
+    private void NavigateToRegister()
+    {
+        Navigation.NavigateTo("Users/register");
+    }
+
+    private void EditUser(int userId)
+    {
+        Navigation.NavigateTo($"/Users/edituser/{userId}");
+    }
+
+    private void DeleteUser(int userId)
+    {
+        var result = UserService.DeleteUser(userId);
+        if (result.Success)
+        {
+            users = UserService.GetUsers(); // Refresh the user list
+        }
+        else
+        {
+            // Handle error (e.g., show a message to the user)
+            Console.WriteLine(result.ErrorMessage);
+        }
+    }
+}

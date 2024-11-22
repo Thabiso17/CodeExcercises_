@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfUser xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <User>
+    <Id>4</Id>
+    <Username>test</Username>
+    <Name>testing</Name>
+    <Surname>QA</Surname>
+    <EmailAddress>testing.QA@test.com</EmailAddress>
+    <CellphoneNumber>0124567009</CellphoneNumber>
+  </User>
+</ArrayOfUser>
